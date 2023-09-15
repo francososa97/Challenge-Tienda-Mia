@@ -8,6 +8,7 @@ const options = {
     info: { title: "Crossfit WOD API", version: "1.0.0" },
   },
   apis: ["src/v1/routes/workoutRoutes.js", "src/database/Workout.js"],
+  //TO DO Modificar routas
 };
 
 // Docs en JSON format

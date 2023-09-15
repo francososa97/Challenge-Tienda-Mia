@@ -1,6 +1,6 @@
 const express = require("express");
-const workoutController = require("../../controllers/workoutController");
-const recordController = require("../../controllers/recordController");
+const productsController = require("../../controllers/ProductsController");
+const ordersController = require("../../controllers/OrdersController");
 
 const router = express.Router();
 
@@ -57,3 +57,5 @@ router
   .delete("/:workoutId", workoutController.deleteOneWorkout);
 
 module.exports = router;
+
+//To do crear routes
