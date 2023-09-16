@@ -1,48 +1,118 @@
-import { Item } from '../Models/Item.js'; // Asegúrate de importar tu interfaz 'Orders'
+const DB = require("./db.json");
+const { saveToDatabase } = require("./utils");
 
-class ProductRepository {
-  private orders: Item[] = [];
-
-  constructor() {
-    // Inicializa las órdenes con datos de ejemplo o carga desde una fuente de datos.
+const getAllproducts = (filterParams) => {
+  try {
+    let products = DB.products;
+    if (filterParams.mode) {
+      return DB.products.filter((product) =>
+        product.mode.toLowerCase().includes(filterParams.mode)
+      );
+    }
+    return products;
+  } catch (error) {
+    throw { status: 500, message: error };
   }
+};
 
-  getAllOrders(): Item[] {
-    return this.orders;
-  }
+const getOneproduct = (productId) => {
+  try {
+    const product = DB.products.find((product) => product.id === productId);
 
-  getOrderById(id: number): Item | undefined {
-    return this.orders.find((order) => order.Id === id);
-  }
-
-  createOrder(newOrder: Item): Item {
-    // Genera un nuevo ID para la orden (esto puede hacerse de manera más robusta en producción).
-    const nextId = this.orders.length > 0 ? Math.max(...this.orders.map((order) => order.Id)) + 1 : 1;
-    newOrder.Id = nextId;
-
-    this.orders.push(newOrder);
-    return newOrder;
-  }
-
-  updateOrder(id: number, updatedOrder: Item): Item | undefined {
-    const index = this.orders.findIndex((order) => order.Id === id);
-    if (index === -1) {
-      return undefined; // Orden no encontrada
+    if (!product) {
+      throw {
+        status: 400,
+        message: `Can't find product with the id '${productId}'`,
+      };
     }
 
-    this.orders[index] = { ...updatedOrder, Id: id };
-    return this.orders[index];
+    return product;
+  } catch (error) {
+    throw { status: error?.status || 500, message: error?.message || error };
   }
+};
 
-  deleteOrder(id: number): Item | undefined {
-    const index = this.orders.findIndex((order) => order.Id === id);
-    if (index === -1) {
-      return undefined; // Orden no encontrada
+const createNewproduct = (newproduct) => {
+  try {
+    const isAlreadyAdded =
+      DB.products.findIndex((product) => product.name === newproduct.name) > -1;
+
+    if (isAlreadyAdded) {
+      throw {
+        status: 400,
+        message: `product with the name '${newproduct.name}' already exists`,
+      };
     }
 
-    const deletedOrder = this.orders.splice(index, 1)[0];
-    return deletedOrder;
-  }
-}
+    DB.products.push(newproduct);
+    saveToDatabase(DB);
 
-export default ProductRepository;
+    return newproduct;
+  } catch (error) {
+    throw { status: 500, message: error?.message || error };
+  }
+};
+
+const updateOneproduct = (productId, changes) => {
+  try {
+    const isAlreadyAdded =
+      DB.products.findIndex((product) => product.name === changes.name) > -1;
+
+    if (isAlreadyAdded) {
+      throw {
+        status: 400,
+        message: `product with the name '${changes.name}' already exists`,
+      };
+    }
+
+    const indexForUpdate = DB.products.findIndex(
+      (product) => product.id === productId
+    );
+
+    if (indexForUpdate === -1) {
+      throw {
+        status: 400,
+        message: `Can't find product with the id '${productId}'`,
+      };
+    }
+
+    const updatedproduct = {
+      ...DB.products[indexForUpdate],
+      ...changes,
+      updatedAt: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
+    };
+
+    DB.products[indexForUpdate] = updatedproduct;
+    saveToDatabase(DB);
+
+    return updatedproduct;
+  } catch (error) {
+    throw { status: error?.status || 500, message: error?.message || error };
+  }
+};
+
+const deleteOneproduct = (productId) => {
+  try {
+    const indexForDeletion = DB.products.findIndex(
+      (product) => product.id === productId
+    );
+    if (indexForDeletion === -1) {
+      throw {
+        status: 400,
+        message: `Can't find product with the id '${productId}'`,
+      };
+    }
+    DB.products.splice(indexForDeletion, 1);
+    saveToDatabase(DB);
+  } catch (error) {
+    throw { status: error?.status || 500, message: error?.message || error };
+  }
+};
+
+module.exports = {
+  getAllproducts,
+  getOneproduct,
+  createNewproduct,
+  updateOneproduct,
+  deleteOneproduct,
+};

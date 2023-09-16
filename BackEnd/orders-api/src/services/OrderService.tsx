@@ -1,4 +1,6 @@
-import { Order } from '../Models/Order.tsx'; // Asegúrate de importar tu interfaz 'Orders'
+import Order from '../Models/Order'; // Asegúrate de importar tu interfaz 'Orders'
+const orderRepository = require("../Repository/OrderRepository.js");
+
 
 class OrdersService {
   private orders: Order[] = [];

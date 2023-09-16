@@ -1,48 +1,118 @@
-import { Order } from '../Models/Order.js'; // Asegúrate de importar tu interfaz 'Orders'
+const DB = require("./db.json");
+const { saveToDatabase } = require("./utils");
 
-class OrderRepository {
-  private orders: Order[] = [];
-
-  constructor() {
-    // Inicializa las órdenes con datos de ejemplo o carga desde una fuente de datos.
+const getAllorders = (filterParams) => {
+  try {
+    let orders = DB.orders;
+    if (filterParams.mode) {
+      return DB.orders.filter((order) =>
+        order.mode.toLowerCase().includes(filterParams.mode)
+      );
+    }
+    return orders;
+  } catch (error) {
+    throw { status: 500, message: error };
   }
+};
 
-  getAllOrders(): Order[] {
-    return this.orders;
-  }
+const getOneorder = (orderId) => {
+  try {
+    const order = DB.orders.find((order) => order.id === orderId);
 
-  getOrderById(id: number): Order | undefined {
-    return this.orders.find((order) => order.Id === id);
-  }
-
-  createOrder(newOrder: Order): Order {
-    // Genera un nuevo ID para la orden (esto puede hacerse de manera más robusta en producción).
-    const nextId = this.orders.length > 0 ? Math.max(...this.orders.map((order) => order.Id)) + 1 : 1;
-    newOrder.Id = nextId;
-
-    this.orders.push(newOrder);
-    return newOrder;
-  }
-
-  updateOrder(id: number, updatedOrder: Order): Order | undefined {
-    const index = this.orders.findIndex((order) => order.Id === id);
-    if (index === -1) {
-      return undefined; // Orden no encontrada
+    if (!order) {
+      throw {
+        status: 400,
+        message: `Can't find order with the id '${orderId}'`,
+      };
     }
 
-    this.orders[index] = { ...updatedOrder, Id: id };
-    return this.orders[index];
+    return order;
+  } catch (error) {
+    throw { status: error?.status || 500, message: error?.message || error };
   }
+};
 
-  deleteOrder(id: number): Order | undefined {
-    const index = this.orders.findIndex((order) => order.Id === id);
-    if (index === -1) {
-      return undefined; // Orden no encontrada
+const createNeworder = (neworder) => {
+  try {
+    const isAlreadyAdded =
+      DB.orders.findIndex((order) => order.name === neworder.name) > -1;
+
+    if (isAlreadyAdded) {
+      throw {
+        status: 400,
+        message: `order with the name '${neworder.name}' already exists`,
+      };
     }
 
-    const deletedOrder = this.orders.splice(index, 1)[0];
-    return deletedOrder;
-  }
-}
+    DB.orders.push(neworder);
+    saveToDatabase(DB);
 
-export default OrderRepository;
+    return neworder;
+  } catch (error) {
+    throw { status: 500, message: error?.message || error };
+  }
+};
+
+const updateOneorder = (orderId, changes) => {
+  try {
+    const isAlreadyAdded =
+      DB.orders.findIndex((order) => order.name === changes.name) > -1;
+
+    if (isAlreadyAdded) {
+      throw {
+        status: 400,
+        message: `order with the name '${changes.name}' already exists`,
+      };
+    }
+
+    const indexForUpdate = DB.orders.findIndex(
+      (order) => order.id === orderId
+    );
+
+    if (indexForUpdate === -1) {
+      throw {
+        status: 400,
+        message: `Can't find order with the id '${orderId}'`,
+      };
+    }
+
+    const updatedorder = {
+      ...DB.orders[indexForUpdate],
+      ...changes,
+      updatedAt: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
+    };
+
+    DB.orders[indexForUpdate] = updatedorder;
+    saveToDatabase(DB);
+
+    return updatedorder;
+  } catch (error) {
+    throw { status: error?.status || 500, message: error?.message || error };
+  }
+};
+
+const deleteOneorder = (orderId) => {
+  try {
+    const indexForDeletion = DB.orders.findIndex(
+      (order) => order.id === orderId
+    );
+    if (indexForDeletion === -1) {
+      throw {
+        status: 400,
+        message: `Can't find order with the id '${orderId}'`,
+      };
+    }
+    DB.orders.splice(indexForDeletion, 1);
+    saveToDatabase(DB);
+  } catch (error) {
+    throw { status: error?.status || 500, message: error?.message || error };
+  }
+};
+
+module.exports = {
+  getAllorders,
+  getOneorder,
+  createNeworder,
+  updateOneorder,
+  deleteOneorder,
+};

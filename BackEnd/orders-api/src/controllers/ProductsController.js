@@ -1,54 +1,56 @@
-// Datos de ejemplo para órdenes de compra (simulación de una base de datos)
-const orders = [];
+const productService = require("../services/ProductService.tsx");
+const products = [
+];
 
-// Ruta para obtener todas las órdenes de compra
-app.get('/orders', (req, res) => {
-  res.json(orders);
-});
+const GetProducts = (req, res) => {
+  res.json(products);
 
-// Ruta para crear una nueva orden de compra
-app.post('/orders', (req, res) => {
-  const newOrder = req.body;
-  orders.push(newOrder);
-  res.status(201).json(newOrder);
-});
+};
 
-// Inicia el servidor
-app.listen(port, () => {
-  console.log(`Servidor Express escuchando en el puerto ${port}`);
-});
+const CreateNewProduct = (req, res) => {
+  const newproduct = req.body;
+  products.push(newproduct);
+  res.status(201).json(newproduct);
+};
 
-// Ruta para obtener una orden de compra por ID
-app.get('/orders/:id', (req, res) => {
-  const orderId = parseInt(req.params.id);
-  const order = orders.find((o) => o.id === orderId);
-  if (!order) {
+const GetProductById = (req, res) => {
+  const productId = parseInt(req.params.id);
+  const product = products.find((o) => o.id === productId);
+  if (!product) {
     return res.status(404).json({ message: 'Orden no encontrada' });
   }
-  res.json(order);
-});
+  res.json(product);
+};
 
-// Ruta para actualizar una orden de compra por ID
-app.put('/orders/:id', (req, res) => {
-  const orderId = parseInt(req.params.id);
-  const updatedOrder = req.body;
+const PutProduct = (req, res) => {
+  const productId = parseInt(req.params.id);
+  const updatedproduct = req.body;
 
-  const index = orders.findIndex((o) => o.id === orderId);
+  const index = products.findIndex((o) => o.id === productId);
   if (index === -1) {
     return res.status(404).json({ message: 'Orden no encontrada' });
   }
 
-  orders[index] = updatedOrder;
-  res.json(updatedOrder);
-});
+  products[index] = updatedproduct;
+  res.json(updatedproduct);
+};
 
-// Ruta para eliminar una orden de compra por ID
-app.delete('/orders/:id', (req, res) => {
-  const orderId = parseInt(req.params.id);
-  const index = orders.findIndex((o) => o.id === orderId);
-  if (index === -1) {
-    return res.status(404).json({ message: 'Orden no encontrada' });
-  }
-  const deletedOrder = orders.splice(index, 1)[0];
-  res.json(deletedOrder);
-});
+const DeleteProduct = (req, res) => {
+    const productId = parseInt(req.params.id);
+    const index = products.findIndex((o) => o.id === productId);
+    if (index === -1) {
+      return res.status(404).json({ message: 'Orden no encontrada' });
+    }
+    const deletedproduct = products.splice(index, 1)[0];
+    res.json(deletedproduct);
+};
+
+
+module.exports = 
+{
+  GetProducts,
+  CreateNewProduct,
+  GetProductById,
+  PutProduct,
+  DeleteProduct
+};

@@ -1,4 +1,7 @@
-  
+import Item from '../Models/Item'; // Asegúrate de importar tu interfaz 'Orders'
+import OrderStatus from '../Models/OrderStatus'; // Asegúrate de importar tu interfaz 'Orders'
+import Cliente from '../Models/Cliente'; // Asegúrate de importar tu interfaz 'Orders'
+
   export default interface Order {
     Id: number;
     CreateDate: Date;

@@ -4,3 +4,5 @@ enum OrderStatus {
     Delivery = 'Delivery',
     Traveling = 'Traveling',
   }
+
+  export default OrderStatus

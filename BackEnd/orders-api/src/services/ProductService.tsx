@@ -1,4 +1,6 @@
-import { Item } from '../Models/Item.js'; // Asegúrate de importar tu interfaz 'Orders'
+import Item from '../Models/Item';
+const productRepository = require("../Repository/ProductRepository.js");
+
 
 class ProductService {
   private orders: Item[] = [];
@@ -45,5 +47,4 @@ class ProductService {
   }
 }
 
-export default ProductService
-;
+export default ProductService;

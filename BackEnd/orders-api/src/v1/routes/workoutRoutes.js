@@ -4,58 +4,16 @@ const ordersController = require("../../controllers/OrdersController");
 
 const router = express.Router();
 
-/**
- * @openapi
- * /api/v1/workouts:
- *   get:
- *     tags:
- *       - Workouts
- *     parameters:
- *       - in: query
- *         name: mode
- *         schema:
- *           type: string
- *         description: The mode of a workout
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: OK
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: "#/components/schemas/Workout"
- *       5XX:
- *         description: FAILED
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: FAILED
- *                 data:
- *                   type: object
- *                   properties:
- *                     error:
- *                       type: string
- *                       example: "Some error message"
- */
 router
-  .get("/", workoutController.getAllWorkouts)
-  .get("/:workoutId", workoutController.getOneWorkout)
-  .get("/:workoutId/records", recordController.getRecordForWorkout)
-  .post("/", workoutController.createNewWorkout)
-  .patch("/:workoutId", workoutController.updateOneWorkout)
-  .delete("/:workoutId", workoutController.deleteOneWorkout);
+    .get("/order", ordersController.GetOrders)
+    .post("/order", ordersController.CreateNewOrder)
+    .get("/order/:id", ordersController.GetOrderById)
+    .patch("/order/:id", ordersController.PutOrder)
+    .delete("/order/:id", ordersController.DeleteOrder)
+    .get("/product", productsController.GetProducts)
+    .post("/product", productsController.CreateNewProduct)
+    .get("/product/:id", productsController.GetProductById)
+    .patch("/product/:id", productsController.PutProduct)
+    .delete("/product/:id", productsController.DeleteProduct);
 
 module.exports = router;
-
-//To do crear routes

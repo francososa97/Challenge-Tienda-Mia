@@ -12,6 +12,7 @@
   "author": "Franco Sosa <franco.gonzalez.sosa@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^20.6.1",
     "nodemon": "^2.0.19"
   },
   "dependencies": {
