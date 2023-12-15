@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import orderRoutes from './routes/orderRoutes';
 
 const app = express();
+const cors = require('cors');
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 const config = {
   db:{
