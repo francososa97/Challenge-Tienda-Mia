@@ -1,11 +1,7 @@
 // En 'src/controllers/OrdersController.ts'
-
 import { Request, Response } from 'express';
 import Order from '../Models/OrderModel';
-import OrderEntity from '../Models/OrderEntity';
 import OrderModel from '../Models/OrderModel'; 
-
-
 
 // Obtener todas las órdenes
 export const getAllOrders = async (req: Request, res: Response) => {
@@ -25,7 +21,6 @@ export const getOrderById = async (req: Request, res: Response) => {
 
   try {
     const orders = await OrderModel.find();
-    console.log(orders);
     let orderSelected = {};
     orders.map(x => {
       if(x.Id === intOrderId)
